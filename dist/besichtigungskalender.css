@@ -4,3 +4,5 @@
 .timeline-list:empty{display:none}
 
 .checklist-button{display:inline-flex;align-items:center;padding:11px 17px;border:1px solid #cbded7;border-radius:9px;background:#eef7f3;color:#087e79;text-decoration:none;font-size:14px;font-weight:650}.checklist-button:hover{background:#dfeee7}
+
+.calendar-address-line{display:flex;align-items:center;flex-wrap:wrap;gap:8px 24px;margin-top:5px}.calendar-address-line .stage{margin:0;padding:3px 10px;font-size:11px;line-height:1.5;white-space:nowrap}
