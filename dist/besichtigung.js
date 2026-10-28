@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id),form=$('viewing'),KEY='immobrain-viewings-v1',DRAFT='immobrain-viewing-draft-v1',PRESETS='immobrain-viewing-prices-v1';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),money=n=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(n),num=n=>Number.isFinite(Number(n))&&Number(n)>=0?Number(n):0;
 function read(key,fallback){try{return JSON.parse(localStorage.getItem(key))||fallback}catch{return fallback}}
-function write(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{$('message').textContent='Speicherung fehlgeschlagen. Bitte Browserspeicher prüfen; Eingaben bleiben geöffnet.';return false}}
+function write(key,value){try{localStorage.setItem(key,JSON.stringify(value));if(key===KEY)window.dispatchEvent(new Event('immobrain-calendar-changed'));return true}catch{$('message').textContent='Speicherung fehlgeschlagen. Bitte Browserspeicher prüfen; Eingaben bleiben geöffnet.';return false}}
 let rows=[],active=null,dirty=false;
 function blank(){const prices=read(PRESETS,{});return {fields:{reserve:15},rows:ViewingData.costs.map(([group,label,unit,actions],i)=>({id:'p'+i,group,label,unit,actions,action:0,qty:0,price:0,prices:{}})),checks:{},notes:{}}}
 function collect(){return {fields:Object.fromEntries([...form.querySelectorAll('[name]')].map(x=>[x.name,x.value])),rows:JSON.parse(JSON.stringify(rows)),checks:Object.fromEntries([...document.querySelectorAll('[data-check]')].map(x=>[x.dataset.check,x.value])),notes:Object.fromEntries([...document.querySelectorAll('[data-note]')].map(x=>[x.dataset.note,x.value]))}}
