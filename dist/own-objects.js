@@ -4,14 +4,13 @@
   const ownNumber=name=>ownFields.namedItem(name).value===''?null:Number(ownFields.namedItem(name).value);
   function updateSqm(){const area=ownNumber('area'),amount=ownNumber('amount');document.getElementById('own-object-sqm').textContent=area>0&&amount!==null?euro(amount/area)+(ownFields.namedItem('action').value==='mieten'?' / m² pro Monat':' / m²'):'–'}
   function cancelImport(){if(importController)importController.abort();importController=null;importButton.disabled=false;importButton.textContent='Daten aus Link übernehmen'}
-  function openOwnObject(key=null,withLink=false){cancelImport();ownForm.reset();editingKey=key;importedData=null;importedNow=false;ownMessage.textContent='';const saved=key&&savedState[key];const item=saved?.snapshot;
+  function openOwnObject(key=null){cancelImport();ownForm.reset();editingKey=key;importedData=null;importedNow=false;ownMessage.textContent='';const saved=key&&savedState[key];const item=saved?.snapshot;
     document.getElementById('own-object-title').textContent=key?'Eigenes Objekt bearbeiten':'Eigenes Objekt anlegen';
     if(item){const values={title:item.title||'',action:item.action||'kaufen',typ:item.typ||'wohnung',area:item.square_meter??'',amount:item.action==='mieten'?item.rent_price??'':item.price??'',rooms:item.rooms??'',city:saved.address?.city??item.city??'',zipcode:saved.address?.zipcode??item.zipcode??'',street:saved.address?.street??item.street??'',energy:item.energy_efficency_class||'',renovation:typeof item.renovation_needed==='boolean'?String(item.renovation_needed):'',url:item.url||'',date:item.uptime_date?String(item.uptime_date).slice(0,10):'',status:saved.status||'interessant'};for(const [name,value]of Object.entries(values))ownFields.namedItem(name).value=value;importedData=item}
-    updateSqm();ownDialog.showModal();ownFields.namedItem(withLink?'url':'title').focus();
+    updateSqm();ownDialog.showModal();ownFields.namedItem('title').focus();
   }
   window.openOwnObject=openOwnObject;
   document.getElementById('own-object-add').addEventListener('click',()=>openOwnObject());
-  document.getElementById('own-object-add-link').addEventListener('click',()=>openOwnObject(null,true));
   document.getElementById('own-object-close').addEventListener('click',()=>{cancelImport();ownDialog.close()});
   ownDialog.addEventListener('close',cancelImport);
   ownDialog.addEventListener('cancel',cancelImport);
