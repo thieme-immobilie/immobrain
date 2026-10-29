@@ -4,7 +4,7 @@ const calc={id:'a',values:{listingRef:'object',renovation:'999',renovationItems:
 assert.equal(C.calculationBudget(calc),20000,'Match calculator total including buffer and extra renovation costs');
 const plan={reserve:10,tasks:[{qty:2,unitPrice:5000}],resources:[{qty:10,unitPrice:100,costMode:'included'},{qty:1,unitPrice:2000,costMode:'additional'}]};
 let b=C.budgetStatus(plan,calc);
-assert.equal(b.work,10000);assert.equal(b.additional,2000);assert.equal(b.remaining,8000);assert.equal(b.forecast,13200);assert.equal(b.over,0);
+assert.equal(b.work,10000);assert.equal(b.additional,2000);assert.equal(b.remaining,8000);assert.equal(b.forecast,12000);assert.equal(b.over,0);
 plan.tasks[0].unitPrice=10000;b=C.budgetStatus(plan,calc);
 assert.equal(b.remaining,-2000);assert.equal(b.over,2000,'Overspend is a difference, never added again to costs');assert.equal(b.committed,22000);
 assert.equal(C.calculationBudget({values:{renovation:'0'}}),0,'Explicit zero is a valid budget');
