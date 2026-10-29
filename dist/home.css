@@ -42,3 +42,4 @@ body .dashboard-empty{font-size:14px}
 body .dashboard-notice{font-size:14px;line-height:1.65}
 @media(max-width:800px){header nav{font-size:14px;column-gap:16px;row-gap:10px}.section-heading{align-items:start}}
 @media(max-width:480px){.state-pill{font-size:11px}.assistant-heading{flex-wrap:wrap}.state-pill{margin-left:48px}.assistant-form-bottom{flex-wrap:wrap;align-items:flex-start}.assistant-form-bottom>span{font-size:12px;flex:1;min-width:100px}.metric-grid div>span{font-size:12px}.tool-card h3{font-size:20px}.upcoming-card .text-link{font-size:13px}.tool-step{font-size:12px}.hero-copy>p{font-size:16px}}
+

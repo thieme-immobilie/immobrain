@@ -15,3 +15,4 @@ grid.addEventListener('drop',e=>{const column=e.target.closest('[data-drop-statu
 grid.addEventListener('dragend',clear);
 grid.addEventListener('change',e=>{const select=e.target.closest('[data-move]');if(select?.value)move(select.dataset.move,select.value)});
 })();
+
