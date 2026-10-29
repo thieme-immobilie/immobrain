@@ -12,3 +12,5 @@ for(const status of ['interessant','angefragt','besichtigt','angebot'])assert.eq
 assert(source.includes('draggable="true"'));assert(source.includes('data-drop-status='));
 console.log('Dashboard drag-and-drop: persisted status, keyboard menu, history preservation, manual override and storage failure passed');
 
+
+assert(!source.includes('class="dashboard-move"'),'Dashboard cards must not render the removed move dropdown');
