@@ -25,3 +25,7 @@ Maßnahmenbudget = Summe aus Menge × Einheitspreis der Arbeitspakete. Importier
 ## Tests
 
 `node tests/renovation-core.test.cjs` und `node tests/renovation-ui.test.cjs`. Prüfen u. a. Import, Preisübernahme, Idempotenz, Werkzeugzuordnung, Kosten ohne Doppelzählung, mehrere Pläne, zusätzliche Arbeiten/Beschaffungen, Status und Tabs. Zusätzlich wurden vorhandene Prüfungen für Besichtigungen, Navigation, Immobiliensuche und Fix-und-Flip-Rechner ausgeführt. Eine Browser-Rendering-Prüfung war in der Ausführungsumgebung mangels installiertem Chromium nicht möglich.
+
+## Fortschritt
+
+Jede Phase erhält einen Prozentkreis: Teilaufgaben zählen als einzelne To-dos; Arbeitspakete ohne Teilaufgaben zählen jeweils als ein To-do. Erledigte Arbeitspakete zählen mit allen ihren Teilaufgaben als abgeschlossen. Eine leere Phase bleibt bei 0 %, sofern sie nicht als nicht benötigt markiert wird. Nicht benötigte Phasen zählen als 100 %. Der Gesamtfortschritt ist das gleichgewichtete Mittel der zehn Phasen. Vollständige Phasen und erledigte Aufgaben erscheinen durchgestrichen und ausgegraut. Die Markierung ist umkehrbar.
