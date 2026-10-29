@@ -11,3 +11,8 @@ verifier text not null,expires_at timestamptz not null);
 alter table public.immobrain_google_oauth enable row level security;
 revoke all on public.immobrain_google_oauth from anon, authenticated;
 grant all on public.immobrain_google_oauth to service_role;
+
+-- Datenschutzfunktionen: vorhandene Verbindungen behalten alle Termine, bis eine Frist gewählt wird.
+alter table public.immobrain_google_connections
+ add column retention_days integer not null default 0 check (retention_days in (0,30,90,365)),
+ add column paused boolean not null default false;
