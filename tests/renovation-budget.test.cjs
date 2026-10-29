@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const C=require('../dist/renovation-core.js');
+const calc={id:'a',values:{listingRef:'object',renovation:'999',renovationItems:[{amount:'10000'},{amount:'5000'}],buffer:'10',clearance:'1000',kitchen:'2000',renoother:'500'}};
+assert.equal(C.calculationBudget(calc),20000,'Match calculator total including buffer and extra renovation costs');
+const plan={reserve:10,tasks:[{qty:2,unitPrice:5000}],resources:[{qty:10,unitPrice:100,costMode:'included'},{qty:1,unitPrice:2000,costMode:'additional'}]};
+let b=C.budgetStatus(plan,calc);
+assert.equal(b.work,10000);assert.equal(b.additional,2000);assert.equal(b.remaining,8000);assert.equal(b.forecast,13200);assert.equal(b.over,0);
+plan.tasks[0].unitPrice=10000;b=C.budgetStatus(plan,calc);
+assert.equal(b.remaining,-2000);assert.equal(b.over,2000,'Overspend is a difference, never added again to costs');assert.equal(b.committed,22000);
+assert.equal(C.calculationBudget({values:{renovation:'0'}}),0,'Explicit zero is a valid budget');
+assert.equal(C.calculationBudget({values:{renovation:'',clearance:'0',kitchen:'0'}}),null,'Empty renovation is not a zero budget');
+assert.equal(C.budgetStatus(plan,null).remaining,null);
+const fs=require('node:fs'),ui=fs.readFileSync(require('node:path').join(__dirname,'../dist/renovierung.js'),'utf8');
+assert(ui.includes('all.filter(c=>c.values?.listingRef===plan.listingRef)'));
+assert(ui.includes('all.length===1?all[0]:null'),'Multiple linked calculations require a choice');
+assert(ui.includes("plan.calculationId=''"),'Changing object clears old selection');
+console.log('Renovation budget: calculation totals, remaining funds, overspend, included materials, missing budgets and source selection passed');
