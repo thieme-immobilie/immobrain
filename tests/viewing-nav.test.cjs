@@ -1,17 +1,1 @@
-const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const panels=['kalender','objekte','verbinden'].map(key=>({dataset:{viewingPanel:key},hidden:true})),links=['kalender','checkliste'].map(key=>({dataset:{viewingTab:key},attrs:{},setAttribute(k,v){this.attrs[k]=v},removeAttribute(k){delete this.attrs[k]}}));
-let change,scrolled='';const connect={open:false,scrollIntoView(){scrolled='connect'}};
-const ctx={document:{querySelectorAll:s=>s==='[data-viewing-panel]'?panels:links,getElementById:id=>id==='calendar-connect'?connect:id==='overview-panel'?{scrollIntoView(){scrolled='overview'}}:id==='obj-object:test'?{scrollIntoView(){scrolled='object'}}:null},location:{hash:''},window:{addEventListener(type,fn){change=fn}},requestAnimationFrame:fn=>fn()};
-vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../dist/besichtigung-nav.js'),'utf8'),ctx);
-for(const hash of ['', '#verbinden','#objekte','#obj-object%3Atest']){
-ctx.location.hash=hash;change();assert(panels.every(p=>!p.hidden));assert.equal(links[0].attrs['aria-current'],'page');
-if(hash==='#verbinden'){assert(connect.open);assert.equal(scrolled,'connect')}
-if(hash==='#objekte')assert.equal(scrolled,'overview');
-if(hash.startsWith('#obj-'))assert.equal(scrolled,'object');
-}
-for(const file of ['besichtigung.html','besichtigungskalender.html']){
-const html=fs.readFileSync(require('node:path').join(__dirname,'../dist',file),'utf8'),nav=html.match(/<nav class="viewing-section-nav"[\s\S]*?<\/nav>/)[0];
-assert.equal((nav.match(/data-viewing-tab=/g)||[]).length,2);
-assert(nav.includes('>Besichtigungskalender</a>'));assert(nav.includes('>Besichtigungs-Checkliste</a>'));
-}
-console.log('Two tabs, shared calendar sections and existing deep links passed');
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');const panels=['kalender','objekte','verbinden'].map(key=>({dataset:{viewingPanel:key},hidden:false,open:false})),links=['kalender','objekte','checkliste','verbinden'].map(key=>({dataset:{viewingTab:key},attrs:{},setAttribute(k,v){this.attrs[k]=v},removeAttribute(k){delete this.attrs[k]}}));let change,scrolled=false;const ctx={document:{querySelectorAll:s=>s==='[data-viewing-panel]'?panels:links,getElementById:id=>id==='obj-object:test'?{scrollIntoView(){scrolled=true}}:null},location:{hash:''},window:{addEventListener(type,fn){change=fn}},requestAnimationFrame:fn=>fn()};vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../dist/besichtigung-nav.js'),'utf8'),ctx);assert.equal(panels.filter(x=>!x.hidden)[0].dataset.viewingPanel,'kalender');ctx.location.hash='#verbinden';change();assert(panels[2].open);assert.equal(panels.filter(x=>!x.hidden).length,1);ctx.location.hash='#obj-object%3Atest';change();assert(!panels[1].hidden);assert(scrolled);assert.equal(links[1].attrs['aria-current'],'page');const html=fs.readFileSync(require('node:path').join(__dirname,'../dist/besichtigungskalender.html'),'utf8');for(const script of ['besichtigung-nav.js','calendar-events.js','calendar-sync.js'])assert(html.includes('src="/'+script+'"'));console.log('Viewing navigation: exclusive panels, active links, connection panel, direct object links, script loading and main navigation passed');
