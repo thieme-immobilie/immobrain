@@ -10,7 +10,7 @@ Gespeicherte Besichtigungs-Checkliste auswählen, Maßnahmen prüfen und markier
 
 - Arbeitspakete mit frei benennbarem Gewerk, Phase, Status, Zuständigkeit, Termin, Menge, Einheit, Preis und Notizen.
 - Teilaufgaben hinzufügen, entfernen und abhaken. Abgeschlossene Arbeitspakete bleiben im Budget enthalten.
-- Acht vorgeschlagene Phasen; manuelle Phasenzuordnung und Sortierung innerhalb einer Phase.
+- Zehn Phasen: Entrümpeln, Entkernen, Sanitär-Rohinstallation, Sanitär-Fertigmontage, Wände & Decken, Boden, Türen, Endmontage, Finish & Abnahme, Home Staging. Manuelle Phasenzuordnung und Sortierung innerhalb einer Phase. „Nicht benötigt“ zählt eine Phase als abgeschlossen; die Markierung ist reversibel und löscht keine Aufgaben oder Budgets. Neue importierte Aufgaben aktivieren ihre Phase wieder. Bestehende Pläne werden beim Öffnen auf die neue Phasenstruktur umgestellt, ohne Aufgaben oder Fortschritt zu löschen.
 - Material- und Werkzeugvorschläge passend zu übernommenen Maßnahmen. Vorschläge sind keine verbindliche Material- oder Ausführungsplanung; Mengen, Systeme und Produkte sind vom Nutzer festzulegen. Gemeinsame Werkzeugvorschläge werden zusammengefasst.
 - Eigene Arbeitspakete, Materialien und Werkzeuge ergänzen; Beschaffungsstatus offen/bestellt/vorhanden; Lieferanten und optionale Produktlinks hinterlegen.
 
