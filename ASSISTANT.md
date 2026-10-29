@@ -32,3 +32,7 @@ Ein nach Prüfung gespeicherter Termin nimmt anschließend an der vorhandenen Ka
 `node tests/assistant.test.mjs` prüft Aktionsgrenzen, Suchfilter, Authentifizierung, Datenminimierung, Anbieterfehler, Historie, Termine, Duplikate und Rücknahme bei Speicherfehlern. Die Anbieterantworten sind synthetisch; es wird keine echte KI-Anfrage gestellt. Dashboard-, Kalender- und Datenschutzt tests bleiben separat vorhanden.
 
 Die Browser-Vorschau war bei dieser Änderung wegen fehlender Preview-Infrastruktur nicht verfügbar. Ein visueller Desktop-/Mobiltest und ein vollständiger Test mit dem eigenen OpenAI-Zugang stehen nach Deployment noch aus.
+
+## Fragen zu gespeicherten Daten
+
+Die Aktion `read` unterstützt die nächste Besichtigung, anstehende Besichtigungen, den nächsten geplanten Kontakt, geplante/überfällige Nachfasskontakte, Objektanzahlen je Status und gespeicherte Objektdaten (Preis, Fläche, Zimmer, Status). Eine Frage wird von der KI lediglich einer dieser Abfragen zugeordnet. Die Antworten werden im Browser aus den lokalen Daten gebildet; Termine, Merkliste und Antwortinhalte werden nicht an die KI zurückgeschickt. Angaben beziehen sich auf den Datenstand dieses Browsers, nicht auf eventuelle Änderungen direkt in Google. Ohne passende Daten wird ausdrücklich kein Termin gefunden. Read-Aktionen speichern nichts und benötigen keine Speicherbestätigung. `node tests/assistant-read.test.mjs` prüft diese Datenabfragen.

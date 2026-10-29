@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {queryLocal} from '../dist/assistant-read.mjs';
+const data={'immobrain-listing-status-v1':JSON.stringify({one:{favorite:true,status:'angefragt',snapshot:{street:'Teststraße 1',city:'Leipzig',price:200000,square_meter:60},note:{text:'PRIVATE NOTE'},contact:{phone:'PRIVATE PHONE'}},two:{favorite:true,status:'angebot',snapshot:{title:'Andere Wohnung',city:'Berlin'}}}),'immobrain-viewings-v1':JSON.stringify([{id:'v2',data:{fields:{listingRef:'one'}}}])};
+const storage={getItem:key=>data[key]||null,setItem(){throw Error('Read must not write')}};
+const events=[{id:'visit:old',date:'2026-10-29',time:'09:00',title:'Vergangen',path:'/besichtigung.html?viewing=old'}, {id:'visit:v2',date:'2026-10-29',time:'14:00',title:'Teststraße',path:'/besichtigung.html?viewing=v2'},{id:'manual-visit:object:two',date:'2026-10-30',time:'10:00',title:'Andere Wohnung',path:'/besichtigungskalender.html#obj-object%3Atwo'},{id:'next:object:one',date:'2026-10-28',time:'09:00',title:'Nachfassen',path:'/besichtigungskalender.html'},{id:'next:object:two',date:'2026-11-01',time:'09:00',title:'Kontakt',path:'/besichtigungskalender.html'}];
+const now=new Date('2026-10-29T10:00:00Z'),ask=(target,extra={})=>queryLocal(storage,{action:'read',target,...extra},events,now);
+assert.equal(ask('next_visit').items[0].title,'Teststraße');assert(ask('next_visit').items[0].detail.includes('14:00 Uhr'));assert.equal(ask('visits').count,2);
+assert.equal(ask('next_visit',{objectQuery:'Andere Wohnung'}).items[0].title,'Andere Wohnung');
+assert.equal(ask('next_visit',{objectQuery:'Unbekannt'}).items.length,0);
+assert.equal(ask('next_contact').items[0].title,'Kontakt');assert(ask('contacts').items[0].detail.includes('überfällig'));
+assert.equal(ask('overview').count,2);assert.equal(ask('overview',{status:'angefragt'}).count,1);
+const details=ask('object_details',{objectQuery:'Teststraße'});assert(details.items[0].detail.includes('200.000'));assert(!JSON.stringify(details).includes('PRIVATE'));
+assert.equal(ask('visits',{date:'2026-10-30'}).count,1);
+assert.equal(queryLocal(storage,{action:'read',target:'next_visit'},[],now).items.length,0);
+assert.throws(()=>ask('arbitrary-url'));
+console.log('Local assistant reads: next appointment, timezone, object selection, no matches, overdue contacts, status counts and no notes/phone export passed');

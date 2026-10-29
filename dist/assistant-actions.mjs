@@ -2,10 +2,11 @@ export const destinations={search:'/suche.html#suche',objects:'/suche.html#meine
 export const statusLabels={interessant:'Objekt interessant',angefragt:'Objekt angefragt',besichtigt:'Besichtigt',angebot:'Angebot gestellt'};
 export function validDate(value){if(typeof value!=='string'||!/^20\d{2}-\d{2}-\d{2}$/.test(value))return false;const d=new Date(value+'T00:00:00Z');return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===value}
 export function validatePlan(p){
- if(!p||!['navigate','search','status','visit','help'].includes(p.action))throw Error('Diese Aktion wird noch nicht unterstützt.');
+ if(!p||!['navigate','search','status','visit','read','help'].includes(p.action))throw Error('Diese Aktion wird noch nicht unterstützt.');
  const text=(v,max)=>typeof v==='string'?v.trim().slice(0,max):'';
  const plan={action:p.action,message:text(p.message,600),target:text(p.target,30),objectQuery:text(p.objectQuery,200),status:text(p.status,30),date:p.date||'',time:p.time||'',filters:{}};
  if(plan.action==='navigate'&&!Object.hasOwn(destinations,plan.target))throw Error('Unbekannter Bereich.');
+ if(plan.action==='read'&&!['next_visit','visits','next_contact','contacts','overview','object_details'].includes(plan.target))throw Error('Unbekannte Datenabfrage.');
  if(plan.action==='status'&&!Object.hasOwn(statusLabels,plan.status))throw Error('Unbekannter Objektstatus.');
  if(plan.date&&!validDate(plan.date))throw Error('Bitte ein gültiges Datum angeben.');
  if(plan.time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(plan.time))throw Error('Bitte eine gültige Uhrzeit angeben.');
