@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),C=require('../dist/renovation-core.js');
+const plan={listingRef:'a',phaseVersion:2,phaseNotNeeded:{},tasks:[],resources:[],sources:[],reserve:15};
+const checklist=(id,ref,date)=>({id,name:id,updatedAt:date,data:{fields:{listingRef:ref},rows:[{id:'door',group:'Türen',label:'Tür',action:1,actions:['Bleibt','Ersetzen'],qty:2,unit:'Stk.',price:300}]}});
+const old=checklist('old','a','2026-10-28'),latest=checklist('latest','a','2026-10-29'),other=checklist('other','b','2026-10-30');
+assert.equal(C.linkedChecklist(plan,[latest,other,old]).id,'latest');
+assert.equal(C.linkedChecklist({listingRef:''},[latest]),null);
+assert.equal(C.linkedChecklist(plan,[other]),null);
+let id=0,result=C.importChecklist(plan,C.linkedChecklist(plan,[old,latest]),()=>String(++id));
+assert.equal(result.added,1);assert.equal(result.plan.tasks[0].unitPrice,300);
+result.plan.tasks[0].status='erledigt';result.plan.tasks[0].unitPrice=350;
+let again=C.importChecklist(result.plan,latest,()=>String(++id));
+assert.equal(again.added,0);assert.equal(again.plan.tasks[0].status,'erledigt');assert.equal(again.plan.tasks[0].unitPrice,350);
+latest.data.rows.push({...latest.data.rows[0],id:'door2'});
+assert.equal(C.importChecklist(again.plan,latest,()=>String(++id)).added,1);
+console.log('Automatic checklist: matching object, latest saved version, no duplicates, preserved edits/progress and new measures passed');
