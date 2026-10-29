@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {crypt,googleEvent,googleService} from '../supabase/functions/calendar-feed/google-calendar.mjs';
+import {crypt,googleEvent,googleService,retainedEvents} from '../supabase/functions/calendar-feed/google-calendar.mjs';
 const encrypted=await crypt('refresh-test','secret');assert.equal(await crypt(encrypted,'secret',true),'refresh-test');await assert.rejects(()=>crypt(encrypted,'wrong',true));
 const event={id:'one',date:'2026-11-01',time:'10:30',duration:60,title:'Besichtigung',path:'/besichtigung.html',note:'Notiz'};
 assert.equal(googleEvent(event).start.dateTime,'2026-11-01T09:30:00.000Z');assert.equal(googleEvent({...event,time:''}).end.date,'2026-11-02');
@@ -15,3 +15,19 @@ const callback=new URL('https://test/?state='+url.searchParams.get('state')+'&co
 await service.sync('owner');assert.equal(calls.filter(c=>c.url.includes('/events')&&c.method==='POST').length,1);await service.sync('owner');assert.equal(calls.filter(c=>c.url.includes('/events')&&c.method==='POST').length,1);
 events=[];await service.sync('owner');assert(calls.some(c=>c.url.includes('/events/')&&c.method==='DELETE'));assert.equal(Object.keys(row.mappings).length,0);
 console.log('Encryption, OAuth replay protection, narrow scope, date conversion, idempotent sync and removed events passed');
+const now=new Date('2026-10-29T12:00:00Z');
+const dates=[{date:'2026-09-28'},{date:'2026-09-29'},{date:'2026-10-30'}];
+assert.equal(retainedEvents(dates,30,now).length,2);assert.equal(retainedEvents(dates,0,now).length,3);
+events=[event];await service.sync('owner');const beforePurge=calls.length;
+const result=await service.purge('owner');assert.equal(result.remaining,0);assert.equal(row.paused,true);assert.equal(Object.keys(row.mappings).length,0);
+assert(calls.slice(beforePurge).filter(c=>c.method==='DELETE').every(c=>c.url.includes('/events/')));
+const afterPurge=calls.length;assert((await service.sync('owner')).paused);assert.equal(calls.length,afterPurge);
+await assert.rejects(()=>service.settings('owner',{retentionDays:7,paused:false}));
+await service.settings('owner',{retentionDays:30,paused:false});assert.equal(row.retention_days,30);
+events=[{...event,date:'2020-01-01'}];await service.sync('owner');assert.equal(Object.keys(row.mappings).length,0);
+await service.settings('owner',{retentionDays:0,paused:false});events=[event];await service.sync('owner');
+const pendingIds=Object.keys(row.mappings);const originalFetcher=fetcher;
+const failing=googleService({db,base:'https://test.supabase.co',secret:'secret',fetcher:async(url,opts)=>url.includes('/events/')&&opts.method==='DELETE'?Response.json({},{status:500}):originalFetcher(url,opts)});
+await assert.rejects(()=>failing.purge('owner'));assert(row.paused);assert.deepEqual(Object.keys(row.mappings),pendingIds);assert.equal(row.lease_until,'1970-01-01T00:00:00Z');
+await service.purge('owner');await service.disconnect('owner');assert.equal(row,null);assert(calls.some(c=>c.url.endsWith('/revoke')));
+console.log('Retention boundaries, manual purge, pause, partial failure retry and revocation passed');
