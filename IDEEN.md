@@ -29,7 +29,7 @@ Status: Zurückgestellt · Priorität: niedrig · Aufgenommen: 29.10.2026
 
 Ziel: Rechnungen aus dem Renovierungsplaner automatisch in einem ausgewählten Google-Drive-Ordner für die Buchhaltung ablegen und mit der jeweiligen Kostenposition verknüpfen.
 
-- [ ] Rechnungshochladen und Belegzuordnung je Kostenposition als Voraussetzung vorbereiten (To-do, Material, Werkzeug oder Gewerk; mehrere Belege möglich).
+- [x] Rechnungshochladen und Belegzuordnung je Kostenposition als Voraussetzung vorbereiten (To-do, Material, Werkzeug oder Gewerk; mehrere Belege möglich).
 - [ ] Eigene Google-Anbindung der Website mit begrenzten Zugriffsrechten und widerrufbarer Kontofreigabe einrichten.
 - [ ] Zielordner auswählen und Ordnerstruktur nach Objekt, Renovierung und Gewerk festlegen.
 - [ ] Automatischen Upload mit eindeutiger Dateibenennung und Schutz vor doppelter Ablage umsetzen.
