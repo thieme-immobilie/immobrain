@@ -17,3 +17,7 @@ Width, depth and ceiling height can be corrected. Advanced users can edit the va
 ## Verification
 
 Tests use fake API/auth responses, not live paid inference. Geometry/schema checks, opening gaps, image/reference selection, private metadata exclusion, vendor allowlisting and regressions of the existing still-image workflow are covered. Actual WebGL rendering and real inference quality need a browser check on the deployed site; local preview infrastructure was unavailable during implementation. WebGL 2 is required. No claim is made that this recovers photorealistic hidden surfaces or accurate construction geometry.
+
+## Quality revision 2
+
+Reconstruction now uses two sequential Responses requests within a shared 175-second deadline: original 2D source alone for structure (furniture forced empty), then a separate furniture-only schema with locked room/wall geometry plus both references. Furniture cannot replace architecture in the second response. Objects with implausibly small physical footprints or footprints outside a room are omitted with a note. If furnishing fails, preserve the structural result and explicitly report missing furnishing rather than claiming a complete match. No automatic repeat calls. UI consent discloses the two inference steps. Stored models are not automatically regenerated; revision 2 is recorded when saved. Lighting exposure is reduced and procedural floor wood grain is used, but the result remains schematic and not photorealistic mesh recovery.
