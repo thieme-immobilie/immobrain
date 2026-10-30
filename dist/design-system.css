@@ -94,3 +94,10 @@ td,th{border-color:#e2eae5}
 @media(max-width:800px){header .wrap.nav{min-height:76px;padding:10px 0;gap:8px}header nav.links{justify-content:center;gap:3px}header nav.links a{padding:8px 10px;font-size:12px}main.wrap{padding-top:22px}.ib-page-hero{padding:26px 24px;border-radius:22px}.home-hero{padding:26px;gap:24px;border-radius:24px}.panel,.section,.saved-calcs{padding:20px}.section-nav,.planner-tabs,.viewing-section-nav{display:flex;flex-wrap:wrap}.section-nav a,.planner-tabs a,.viewing-section-nav a{padding:9px 11px;font-size:12px}.phase-row{gap:8px}.object-timeline{padding:18px}.home-hero .hero-copy h1{font-size:42px}.hero-actions{flex-wrap:wrap}.plan-stats>article{padding:18px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 @media print{body{background:white}.ib-page-hero,.home-hero{background:white;color:#123b43;box-shadow:none}.ib-page-hero h1,.home-hero .hero-copy h1{color:#123b43}.ib-page-hero p{color:#48625e}.ib-page-hero::after,.home-hero::before{display:none}}
+
+/* Compact editorial workflow beneath the home actions. */
+.home-hero .hero-tags{counter-reset:hero-step;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:26px;padding-top:20px;border-top:1px solid #ffffff20;width:fit-content;max-width:100%}
+.home-hero .hero-tags span{counter-increment:hero-step;display:inline-flex;align-items:center;gap:8px;padding:0;border:0;background:none;color:#d5e8df;font-size:12px;font-weight:550;line-height:1.5;white-space:nowrap}
+.home-hero .hero-tags span::before{content:counter(hero-step,decimal-leading-zero);display:inline-grid;place-items:center;flex:none;width:24px;height:24px;margin:0;border:1px solid #aed7c336;border-radius:50%;background:#ffffff08;color:#acd5bf;font-size:9px;font-weight:650;letter-spacing:.02em}
+.home-hero .hero-tags span:not(:last-child)::after{content:"";width:12px;height:1px;margin-left:5px;background:#acd5bf55}
+@media(max-width:520px){.home-hero .hero-tags{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:12px 18px}.home-hero .hero-tags span:not(:last-child)::after{display:none}}
