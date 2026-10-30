@@ -31,6 +31,18 @@ res=JSON.parse(db['immobrain-renovation-draft-v1']).resources.find(r=>r.id===res
 el('save-plan').onclick();const restored=JSON.parse(db['immobrain-renovation-plans-v1']).find(p=>p.id===currentPlan.id);assert(restored.resources.find(r=>r.id===res.id).offers.length);
 console.log('Offer UI: save offer, preserve through position editing, apply shipping-inclusive cost and save plan passed');
 
+
+// Alternate material variants persist independently; only one can affect costs.
+el('material-list').onclick({target:{closest:()=>({dataset:{addResourceVariant:res.id}})}});
+forms['resource-form'].label.value='Alternative Boden';forms['resource-form'].unitPrice.value='75';el('resource-form').onsubmit({preventDefault(){}});
+let variantPlan=JSON.parse(db['immobrain-renovation-draft-v1']),vg=variantPlan.variantGroups.find(g=>g.kind==='resource'),variantResource=variantPlan.resources.find(r=>r.variantGroupId===vg.id&&r.id!==res.id);assert.equal(vg.selectedId,res.id);assert.equal(variantResource.label,'Alternative Boden');assert(!variantResource.offers);assert(el('material-list').innerHTML.includes('Alternative · nicht eingerechnet'));
+el('material-list').onchange({target:{dataset:{chooseVariant:vg.id},value:variantResource.id}});assert.equal(JSON.parse(db['immobrain-renovation-draft-v1']).variantGroups.find(g=>g.id===vg.id).selectedId,variantResource.id);
+el('material-list').onchange({target:{dataset:{chooseVariant:vg.id},value:''}});assert(el('plan-cost-notices').innerHTML.includes('Variantenentscheidung'));
+// To-do alternatives copy editable quantities and steps without marking the new task complete.
+const baseTask=variantPlan.tasks[0];el('task-list').onclick({target:{closest:()=>({dataset:{addTaskVariant:baseTask.id}})}});forms['task-form'].title.value='Boden Parkett';forms['task-form'].unitPrice.value='150';el('task-form').onsubmit({preventDefault(){}});variantPlan=JSON.parse(db['immobrain-renovation-draft-v1']);const tg=variantPlan.variantGroups.find(g=>g.kind==='task'),altTask=variantPlan.tasks.find(t=>t.variantGroupId===tg.id&&t.id!==baseTask.id);assert(altTask);assert.equal(altTask.status,'offen');assert(!altTask.sourceKey);assert(altTask.steps.every(s=>!s.done));
+el('task-list').onchange({target:{dataset:{chooseVariant:tg.id},value:altTask.id}});assert.equal(JSON.parse(db['immobrain-renovation-draft-v1']).variantGroups.find(g=>g.id===tg.id).selectedId,altTask.id);
+el('save-plan').onclick();el('saved-plans').onclick({target:{closest:()=>({dataset:{openPlan:variantPlan.id}})}});assert(el('task-list').innerHTML.includes('Boden Parkett'));assert(el('material-list').innerHTML.includes('Noch unentschieden'));assert(el('task-list').innerHTML.includes('✓ Gewählte Variante'));
+console.log('Variants UI: create task/material alternatives, choose/open decision, preserve independent records and save/reopen passed');
 (async()=>{
 let searches=0,refreshes=0,failAuth=false;
 c.AbortSignal=AbortSignal;c.FloorplanSession={access:async(force)=>{if(force)refreshes++;return 'test'}};

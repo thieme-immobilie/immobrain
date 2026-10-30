@@ -1,0 +1,11 @@
+# Varianten im Renovierungsplaner
+
+Bei To-dos, Materialien und Werkzeugen lässt sich über „+ Alternative“ eine weitere Ausführung anlegen. Beispiel: Boden – Vinyl / Boden – Parkett. Das Formular übernimmt Mengen, Einheit, Zuordnungen und Preis als Ausgangspunkt; die neue Position erhält eine eigene ID, einen offenen Status und bei To-dos neue, unerledigte Teilaufgaben. Rechnungen und Angebote werden nicht dupliziert. Neu importierte Checklisten überschreiben keine Variantenentscheidung.
+
+Die Gruppe erscheint zusammenhängend mit einem Dropdown für die gewählte Variante und „Noch unentschieden“. Beim Anlegen bleibt die ursprüngliche Position gewählt, damit bestehende Budgets nicht überraschend wechseln. Auswahl ist jederzeit reversibel. Jede Alternative hat eigene Preise, Notizen und Produktangebote und kann unabhängig bearbeitet oder entfernt werden. Wird die gewählte Alternative gelöscht, ist die Entscheidung wieder offen, ohne automatisch eine andere Variante auszuwählen.
+
+Budget: Nur die ausgewählte To-do-Variante und ausgewählte zusätzliche Beschaffungen zählen. Bereits im To-do enthaltene Materialien werden weiterhin nicht zusätzlich berechnet. Bei offenen Entscheidungen zählen die Kosten der ganzen Gruppe vorläufig nicht; ein Hinweis markiert die Kalkulation als unvollständig. Preise nicht gewählter Alternativen bleiben für den Vergleich sichtbar. Der Fortschritt berücksichtigt nur gewählte To-dos; eine offene To-do-Entscheidung zählt als ein offener Planungspunkt, damit sie nicht fälschlich abgeschlossen erscheint. „Nicht benötigt“ pro Renovierungsphase hat weiterhin Vorrang. Tatsächlich bezahlte Rechnungen bleiben unabhängig von Variantenentscheidungen im Zahlungsüberblick erhalten.
+
+Speicherung im bestehenden lokalen Plan/Entwurf: `variantGroups: [{id,kind,label,selectedId}]` und `variantGroupId` der To-dos/Beschaffungspositionen. Keine Datenbank- oder API-Änderung. Variantenwahl von To-dos und Beschaffung ist unabhängig; zugehörige Beschaffungen entsprechend auswählen. Keine automatische Variantenwahl auf Basis von Preisen oder Bestellungen.
+
+Prüfungen: `node tests/renovation-variants.test.cjs`, `node tests/renovation-ui.test.cjs`, `node tests/renovation-budget.test.cjs`, `node tests/renovation-offers.test.cjs`. Visuelle Browserprüfung nicht verfügbar.
