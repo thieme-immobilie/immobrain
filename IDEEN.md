@@ -38,3 +38,21 @@ Ziel: Rechnungen aus dem Renovierungsplaner automatisch in einem ausgewählten G
 - [ ] Berechtigungen, Verbindungswiderruf und Fehlerfälle prüfen.
 
 Abgrenzung: Zurückgestellt ist die automatische Drive-Ablage. Eine Belegsammlung ist keine vollständige Buchhaltungsintegration. Diese Idee ist noch nicht umgesetzt.
+
+## IDEE-003: Interaktive 3D-Grundrisse näher an die Originalvorlage bringen
+
+Status: Zurückgestellt · Priorität: niedrig · Aufgenommen: 30.10.2026
+Zeithorizont: In einigen Monaten wieder aufnehmen; kein fester Termin. Bis dahin keine weitere Entwicklung an diesem Punkt.
+
+Ziel: Aus 2D-Grundriss und erzeugter Bildansicht ein verlässlicheres, optisch hochwertigeres, frei drehbares 3D-Modell erstellen.
+
+- [x] Möblierte 3D-Bildansichten mit Upload, lokalem Zuschnitt, weißen Wänden und Standardraumhöhe von 2,50 m ermöglichen.
+- [x] Ersten interaktiven Modus mit Drehung, Zoom, Draufsicht, Möbelanzeige und lokaler Speicherung ergänzen.
+- [x] Architektur und Möblierung in getrennte Erkennungsschritte aufteilen; unplausible Möbelpositionen filtern.
+- [ ] Übereinstimmung von Raumaufteilung, Wandverläufen, Türen und Fenstern mit der Originalvorlage systematisch prüfen und verbessern.
+- [ ] Möbel, Proportionen, Materialien und Beleuchtung näher an die erzeugte Bildansicht bringen.
+- [ ] Einfachere visuelle Korrektur von Wänden, Öffnungen und Möbeln ermöglichen, statt ausschließlich JSON-Daten zu bearbeiten.
+- [ ] Geeignete spezialisierte Erkennungsdienste oder 3D-Modellbibliotheken hinsichtlich Qualität, Kosten, Nutzungsrechten und Datenschutz vergleichen.
+- [ ] Mit mehreren echten Grundrissen im Browser testen; Qualität, Laufzeit und Kosten dokumentieren.
+
+Aktueller Stand: Die fotorealistische Bildansicht ist nutzbar. Der interaktive Modus ist ein schematischer Prototyp und entspricht der Vorlage noch nicht ausreichend. Die zuletzt eingebaute zweistufige Rekonstruktion ist technisch geprüft, ihre Qualität wurde noch nicht anhand einer echten Generierung visuell bestätigt. Bestehende Funktionen bleiben erhalten; eine identische oder maßgeprüfte 3D-Rekonstruktion ist nicht zugesichert.
