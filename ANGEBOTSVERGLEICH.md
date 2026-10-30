@@ -23,3 +23,9 @@ Vor Übernahme in vorhandene Positionen müssen Packungsinhalt und unbekannte Ve
 Weitere Prüfung: `node tests/shopping.test.mjs`. Die UI-Tests prüfen auch globale Suche ohne vorhandene Position, Übernahme ins Werkzeugformular, Review bei vorhandenen Positionen und einmalige Auth-Erneuerung. Echte Verbindung mit dem Cloudflare-Secret und Browserdarstellung sind erst nach dem Deployment mit angemeldetem Nutzer prüfbar.
 
 Offizielle Dokumentation: https://serpapi.com/google-shopping-api , https://serpapi.com/shopping-results , https://serpapi.com/account-api .
+
+## Diagnose fehlgeschlagener Suchen
+
+Fehler werden seit der Nachbesserung nach Anmeldung (`auth_*`), SerpApi-Konto (`account_*`) und Produktsuche (`search_*`) getrennt. `*_timeout` = Zeitüberschreitung, `*_network` = Verbindungs-/Transportfehler, `*_response` = keine verwertbare JSON-Antwort, `*_http_NNN` = HTTP-Antwort des jeweiligen Dienstes. Es werden keine rohen Fehlermeldungen, URLs mit Schlüsseln oder Accountantworten ausgegeben. Nur HTTP 401/403 vom Anmeldedienst löst die erneute Anmeldung aus; vorübergehende 5xx-Probleme melden einen Dienstausfall. Produktsuche bis 90 Sekunden, Konto bis 20 Sekunden, Browser-Gesamtwartezeit 135 Sekunden. Keine automatische Wiederholung einer begonnenen Produktsuche. Das Cloudflare-Secret wird vor Verwendung von umgebenden Leerzeichen bereinigt.
+
+Die konkrete Ursache des gemeldeten Produktionsfehlers konnte ohne angemeldeten Live-Zugriff bzw. Worker-Logs nicht bestätigt werden. Die diagnostischen Fehlerfälle sind mit kontrollierten Antworten getestet. Nach Deployment „Verbindung prüfen“ und anschließend die Suche erneut testen; Fehlercode dient zur weiteren Eingrenzung.

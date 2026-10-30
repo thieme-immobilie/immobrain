@@ -19,3 +19,12 @@ assert.equal(shippingCost('Free delivery'),0);assert.equal(shippingCost('Free de
 // Bounded bodies are rejected before touching SerpApi.
 user='large';const huge=new Request(origin+'/api/shopping/search',{method:'POST',headers:{Origin:origin,Authorization:'Bearer test'},body:'x'.repeat(5000)});assert.equal((await shopping(huge,env,fetcher)).status,400);
 console.log('Shopping backend: auth/origin/body guards, quota enforcement, no secret leakage, single-search cache, errors, currency/installment/used filters, safe links and discounts passed');
+
+// Diagnose failures by stage without surfacing secrets or raw upstream bodies.
+for(const stage of ['auth','account','search'])for(const failure of ['timeout','network','response']){
+ const id='diag-'+stage+'-'+failure;
+ const diagnosticFetch=async(input)=>{const u=new URL(input),current=u.hostname.endsWith('supabase.co')?'auth':u.pathname==='/account.json'?'account':'search';if(current===stage){if(failure==='timeout')throw new DOMException('secret-test','TimeoutError');if(failure==='network')throw Error('secret-test private@example.com');return new Response('<html>secret-test</html>',{status:200})}if(current==='auth')return Response.json({id,email_confirmed_at:'yes'});if(current==='account')return Response.json({this_month_usage:0,total_searches_left:250});return Response.json({shopping_results:[]})};
+ const result=await shopping(req({query:id}),env,diagnosticFetch),diagnostic=await result.json();assert.equal(diagnostic.code,stage+'_'+failure);assert.equal(result.status,failure==='timeout'?504:502);assert(!JSON.stringify(diagnostic).includes('secret-test'));assert(!JSON.stringify(diagnostic).includes('private@example.com'));
+}
+const outage=await shopping(req(),env,async()=>new Response('Unavailable',{status:503}));assert.equal(outage.status,503);assert.equal((await outage.json()).code,'auth_http_503');
+console.log('Shopping diagnostics: timeouts, network and non-JSON failures identify auth/account/search stages; transient auth outage is not a sign-in error; secrets remain hidden');
