@@ -1,0 +1,11 @@
+# Angebotsvergleich im Renovierungsplaner
+
+Unter „Material im Plan“ oder „Werkzeug im Plan“ pro Position „Produkt suchen / vergleichen“ öffnen. Angebote werden manuell mit Händler, URL, Bruttopreis je Packung, Packungsinhalt in der Einheit der Position und Versand eingetragen. Online suchen öffnet Google Shopping in einem neuen Tab, keine Händlerabfrage oder automatische Preisaktualisierung. Nur der eingegebene Suchbegriff wird beim Klick an die externe Suche übertragen, keine Adresse, Objektzuordnung oder Planinformationen.
+
+Benötigte Packungen = aufgerundeter Bedarf × (1 + Verschnitt / 100) / Packungsinhalt. Gesamtkosten = Packungen × Packungspreis + einmaliger Versand. Vergleich sortiert nach diesem Gesamtpreis; Qualität, Lieferfähigkeit, Mindestbestellwerte und individuelle Rabatte muss der Nutzer prüfen. Bei Werkzeugen Stück als Packungsinhalt 1 verwenden; Mietpreise nur bei gleicher Bezugsdauer vergleichen. Ändert sich die Einheit der Position, muss das Angebot in der neuen Einheit bearbeitet werden.
+
+„Übernehmen“ ersetzt Anbieter, Link und Preis der Position. Für exakte Budgetbeträge einschließlich Paketüberhang und Versand wird der Gesamtpreis auf die ursprüngliche Bedarfsmenge verteilt; daher kann der interne Einzelpreis mehr als zwei Nachkommastellen enthalten. Die bestehende Einstellung „im To-do enthalten“ / „zusätzlich“ bleibt erhalten, ebenso Status, Zuordnungen und Rechnungen. Kein Kauf wird ausgelöst. Bereits im To-do enthaltene Beschaffungen erhöhen das Budget nicht erneut.
+
+Daten liegen in `offers`, `offerWaste` und `selectedOffer` der jeweiligen Ressource im vorhandenen lokalen Plan-/Entwurfsspeicher. Ausgewählte Angebote enthalten eine Preismomentaufnahme; spätere Bearbeitung/Löschung eines Angebots verändert den übernommenen Preis nicht automatisch. Auch spätere manuelle Preis- oder Rechnungsübernahmen lassen die historische Angebotsmomentaufnahme bestehen. Der Plan muss gespeichert werden, bevor er auf Dauer erhalten bleibt. Kein Cloud-Sync, kein neuer externer Backenddienst und keine API-Schlüssel erforderlich.
+
+Prüfung: `node tests/renovation-offers.test.cjs`, `node tests/renovation-ui.test.cjs`, `node tests/renovation-budget.test.cjs`, `node tests/renovation-core.test.cjs`. Browseransicht wegen fehlendem Preview-Daemon nicht verifiziert.

@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict'),O=require('../dist/renovation-offers.js'),C=require('../dist/renovation-core.js');
+const offer={id:'o1',supplier:'Händler',url:'https://example.com/boden',price:24.99,packSize:2.2,shipping:29.9,unit:'m²'};
+const resource={id:'r1',qty:42,unit:'m²',unitPrice:10,costMode:'included',status:'bestellt',taskIds:['t1'],offers:[offer]};
+const q=O.quote(offer,42,10);assert.equal(q.packs,21);assert.equal(q.total,554.69);assert.equal(O.quote(offer,44).packs,20);assert.equal(O.quote(offer,0),null);assert.equal(O.quote({...offer,packSize:0},42),null);
+const next=O.apply(resource,offer,10);assert.equal(Math.round(next.qty*next.unitPrice*100)/100,q.total);assert.equal(next.status,'bestellt');assert.deepEqual(next.taskIds,['t1']);assert.equal(next.offers.length,1);assert.equal(resource.unitPrice,10);assert.equal(next.selectedOffer.packs,21);
+const plan={tasks:[{qty:1,unitPrice:1000}],resources:[next]};assert.equal(C.totals(plan).total,1000);next.costMode='additional';assert.equal(C.totals(plan).total,1554.69);
+assert.throws(()=>O.apply({...resource,unit:'Stk.'},offer),/Einheit/);assert.throws(()=>O.apply({...resource,qty:0},offer),/Menge/);
+assert.equal(O.url('javascript:alert(1)'), '');assert.equal(O.url('https://user:secret@example.com'),'');assert.equal(O.url('https://example.com/?x=1'),'https://example.com/?x=1');
+const restored=JSON.parse(JSON.stringify(next));assert.equal(restored.selectedOffer.total,554.69);assert.equal(restored.offers[0].price,24.99);assert(!O.summary({...next,selectedOffer:{...next.selectedOffer,supplier:'<script>'}}).includes('<script>'));
+console.log('Offers: pack rounding, waste, shipping, budget deduplication, unit validation, persistence and link safety passed');

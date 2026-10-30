@@ -12,6 +12,6 @@ assert.equal(C.calculationBudget({values:{renovation:'',clearance:'0',kitchen:'0
 assert.equal(C.budgetStatus(plan,null).remaining,null);
 const fs=require('node:fs'),ui=fs.readFileSync(require('node:path').join(__dirname,'../dist/renovierung.js'),'utf8');
 assert(ui.includes('all.filter(c=>c.values?.listingRef===plan.listingRef)'));
-assert(ui.includes('all.length===1?all[0]:null'),'Multiple linked calculations require a choice');
+const vm=require('node:vm'),context={plan:{calculationId:''},linkedCalculations:()=>[{id:'first'},{id:'last'}]};vm.createContext(context);vm.runInContext(ui.match(/function budgetCalculation\(\)\{[^\n]+/)[0],context);assert.equal(context.budgetCalculation().id,'last','Use latest linked calculation automatically');context.plan.calculationId='first';assert.equal(context.budgetCalculation().id,'first','Keep an existing explicit selection');context.linkedCalculations=()=>[];assert.equal(context.budgetCalculation(),null);
 assert(ui.includes("plan.calculationId=''"),'Changing object clears old selection');
 console.log('Renovation budget: calculation totals, remaining funds, overspend, included materials, missing budgets and source selection passed');
