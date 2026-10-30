@@ -1,0 +1,3 @@
+const assert=require('node:assert/strict'),P=require('../dist/floorplan-progress.js');
+assert.deepEqual(P.baseline([]),{seconds:180,measured:false});assert.equal(P.baseline([70,90,100]).seconds,90);assert.equal(P.baseline([null,-1,500,'50',80,100]).seconds,90);
+let prev=0;for(let second=0;second<600;second++){const x=P.state(second,120);assert(x.percent>=prev);assert(x.percent<100);prev=x.percent}assert.equal(P.state(119,120).remaining,1);assert.equal(P.state(120,120).remaining,null);assert.equal(P.state(1000,120).percent,95);assert.equal(P.time(75),'1:15');console.log('Estimated progress: historical median, invalid samples, monotonic capped estimate, overdue state and elapsed display passed');
