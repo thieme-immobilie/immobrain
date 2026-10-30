@@ -28,3 +28,12 @@ for(const stage of ['auth','account','search'])for(const failure of ['timeout','
 }
 const outage=await shopping(req(),env,async()=>new Response('Unavailable',{status:503}));assert.equal(outage.status,503);assert.equal((await outage.json()).code,'auth_http_503');
 console.log('Shopping diagnostics: timeouts, network and non-JSON failures identify auth/account/search stages; transient auth outage is not a sign-in error; secrets remain hidden');
+
+// Match Cloudflare Workers' fetch behavior: redirect:error throws before any HTTP request.
+let edgeCalls=0;
+const edgeFetch=async(input,init)=>{if(init?.redirect==='error')throw TypeError('Unsupported redirect mode: error');const u=new URL(input);if(u.hostname.endsWith('supabase.co'))return Response.json({id:'edge-runtime',email_confirmed_at:'yes'});edgeCalls++;assert.equal(init.redirect,'manual');if(u.pathname==='/account.json')return Response.json({this_month_usage:0,total_searches_left:250});return Response.json({shopping_results:[product('edge-product',99)]})};
+const edgeResult=await shopping(req({query:'Industriesauger',maxPrice:200}),env,edgeFetch);assert.equal(edgeResult.status,200);assert.equal((await edgeResult.json()).products[0].price,99);assert.equal(edgeCalls,2);
+// Redirects must not send the key to any other endpoint.
+let redirectCalls=0;const redirectFetch=async(input,init)=>{const u=new URL(input);if(u.hostname.endsWith('supabase.co'))return Response.json({id:'edge-redirect',email_confirmed_at:'yes'});redirectCalls++;assert.equal(init.redirect,'manual');assert.equal(u.hostname,'serpapi.com');return new Response('',{status:302,headers:{Location:'https://other.example/path'}})};
+const redirected=await shopping(req({query:'Industriesauger'}),env,redirectFetch);assert.equal((await redirected.json()).code,'account_http_302');assert.equal(redirectCalls,1);
+console.log('Cloudflare fetch regression: manual redirect mode works for account and search; redirects are not followed and secrets remain on SerpApi');
