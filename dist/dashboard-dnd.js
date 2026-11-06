@@ -1,5 +1,5 @@
 (()=>{'use strict';const grid=document.getElementById('dashboard-groups');if(!grid)return;
-const F='immobrain-listing-status-v1',T='immobrain-viewing-timeline-v1',labels={interessant:'Objekt interessant',angefragt:'Objekt angefragt',besichtigt:'Besichtigt',angebot:'Angebot gestellt'};let dragged=null;
+const F='immobrain-listing-status-v1',T='immobrain-viewing-timeline-v1',labels={interessant:'Objekt interessant',angefragt:'Objekt angefragt',besichtigt:'Besichtigt',angebot:'Angebot gestellt',gekauft:'Gekauft'};let dragged=null;
 const notice=document.createElement('p');notice.className='dashboard-move-message';notice.setAttribute('role','status');notice.setAttribute('aria-live','polite');grid.after(notice);
 function clear(){dragged=null;grid.querySelectorAll('.drop-active,.is-dragging').forEach(el=>el.classList.remove('drop-active','is-dragging'))}
 function move(id,status){if(!Object.hasOwn(labels,status))return;try{

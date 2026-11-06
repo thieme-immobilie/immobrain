@@ -1,5 +1,5 @@
 export const destinations={search:'/suche.html#suche',objects:'/suche.html#meine-objekte',profiles:'/suche.html#meine-suche',market:'/suche.html#marktwert',calculator:'/fix-flip.html',calendar:'/besichtigungskalender.html',checklist:'/besichtigung.html',connect:'/besichtigungskalender.html#verbinden'};
-export const statusLabels={interessant:'Objekt interessant',angefragt:'Objekt angefragt',besichtigt:'Besichtigt',angebot:'Angebot gestellt'};
+export const statusLabels={interessant:'Objekt interessant',angefragt:'Objekt angefragt',besichtigt:'Besichtigt',angebot:'Angebot gestellt',gekauft:'Gekauft'};
 export function validDate(value){if(typeof value!=='string'||!/^20\d{2}-\d{2}-\d{2}$/.test(value))return false;const d=new Date(value+'T00:00:00Z');return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===value}
 export function validatePlan(p){
  if(!p||!['navigate','search','status','visit','read','help'].includes(p.action))throw Error('Diese Aktion wird noch nicht unterstützt.');
@@ -34,10 +34,10 @@ export function commitAction(storage,input,key,{costs=[],id=crypto.randomUUID(),
  }
  if(plan.action!=='status')throw Error('Diese Aktion speichert keine Objektdaten.');
  const before=storage.getItem(T),timeline=JSON.parse(before||'{}'),record=timeline['object:'+key]||{};
- if(plan.status!=='angebot'&&(record.offer||[1,2,3,4].some(n=>record['follow'+n])||record.decision==='no'&&plan.status!=='besichtigt'))throw Error('Zu diesem Objekt gibt es bereits eine Angebotsentscheidung oder Nachfassdaten. Bitte ändere den Status in der Terminpflege, damit die Historie erhalten bleibt.');
+ if(plan.status!=='angebot'&&plan.status!=='gekauft'&&(record.offer||[1,2,3,4].some(n=>record['follow'+n])||record.decision==='no'&&plan.status!=='besichtigt'))throw Error('Zu diesem Objekt gibt es bereits eine Angebotsentscheidung oder Nachfassdaten. Bitte ändere den Status in der Terminpflege, damit die Historie erhalten bleibt.');
  if(['angebot','besichtigt'].includes(plan.status)&&(!plan.date||plan.date>today))throw Error('Bitte ein gültiges Datum bis einschließlich heute eintragen.');
  const next={...record};if(plan.status==='angebot'){next.decision='yes';next.offer=plan.date}else if(plan.status==='besichtigt'){next.visit=plan.date;if(next.decision!=='no')next.decision='pending'}
  timeline['object:'+key]=next;const updated={...state,[key]:{...item,status:plan.status,statusManual:true}};
  storage.setItem(T,JSON.stringify(timeline));try{storage.setItem(F,JSON.stringify(updated))}catch(error){try{if(before===null)storage.removeItem(T);else storage.setItem(T,before)}catch{}throw error}
- return {message:'Status auf „'+statusLabels[plan.status]+'“ gesetzt.',href:'/besichtigungskalender.html#obj-'+encodeURIComponent('object:'+key)};
+ return {message:'Status auf „'+statusLabels[plan.status]+'“ gesetzt.',href:plan.status==='gekauft'?'/suche.html#bestand':'/besichtigungskalender.html#obj-'+encodeURIComponent('object:'+key)};
 }
